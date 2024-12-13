@@ -13,6 +13,6 @@ public class PimalDaumen : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        end(dididi);
     }
 }
