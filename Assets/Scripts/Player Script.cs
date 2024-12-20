@@ -51,8 +51,10 @@ public class PlayerScript : MonoBehaviour
 
     void LateUpdate()
     {
-        // Kamera verfolgen
-        Vector3 targetPosition = new Vector3(transform.position.x, transform.position.y, -10); // -10 sorgt dafür, dass die Kamera im Hintergrund bleibt
-        Camera.main.transform.position = Vector3.SmoothDamp(Camera.main.transform.position, targetPosition, ref velocity, smoothTime);
+        // Zielposition der Kamera mit konstantem Offset
+        Vector3 targetPosition = new Vector3(transform.position.x, transform.position.y, -10);
+
+        // Verwenden von Lerp für eine glattere Bewegung
+        Camera.main.transform.position = Vector3.Lerp(Camera.main.transform.position, targetPosition, smoothTime * Time.deltaTime);
     }
 }
