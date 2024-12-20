@@ -9,18 +9,16 @@ public class PlayerScript : MonoBehaviour
     public float smoothTime = 0.3f;     // Verzögerung für die Kameraverfolgung
     private Vector3 velocity = Vector3.zero; // für Glättung der Kamerabewegung
     private Animator playerAnimator;    // Referenz auf den Animator des Spielers
-    private Rigidbody2D rb;             // Referenz auf das Rigidbody2D des Spielers
     private bool isSprinting;           // Variabel für Sprintstatus
 
     // Start ist beim ersten Frame
     void Start()
     {
         playerAnimator = GetComponent<Animator>();
-        rb = GetComponent<Rigidbody2D>();  // Referenz zum Rigidbody2D abrufen
     }
 
-    // FixedUpdate wird für die Physik-Updates verwendet
-    void FixedUpdate()
+    // Update wird pro Frame aufgerufen
+    void Update()
     {
         // Eingaben für Bewegung
         float moveX = Input.GetAxis("Horizontal");
@@ -33,10 +31,8 @@ public class PlayerScript : MonoBehaviour
         float currentSpeed = isSprinting ? sprintSpeed : moveSpeed;
 
         // Berechnung der Bewegungsrichtung
-        Vector2 movement = new Vector2(moveX, moveY).normalized * currentSpeed;
-
-        // Setze die Geschwindigkeit im Rigidbody2D
-        rb.velocity = new Vector2(movement.x, movement.y);
+        Vector2 movement = new Vector2(moveX, moveY).normalized * currentSpeed * Time.deltaTime;
+        transform.Translate(movement);
 
         // Animationssteuerung
         UpdateAnimation(moveX, moveY);
@@ -45,6 +41,7 @@ public class PlayerScript : MonoBehaviour
     // Methode zur Steuerung der Animationen
     private void UpdateAnimation(float moveX, float moveY)
     {
+
         // Setzen der Bewegungsanimation
         playerAnimator.SetBool("isRunningLeft", moveX < 0);
         playerAnimator.SetBool("isRunningRight", moveX > 0);
