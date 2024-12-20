@@ -5,85 +5,57 @@ using UnityEngine;
 public class PlayerScript : MonoBehaviour
 {
     public float moveSpeed = 3f;        // Standardgeschwindigkeit des Spielers
-    public float sprintSpeed = 6f;     // Geschwindigkeit des Spielers im Sprint
+    public float sprintSpeed = 6f;      // Geschwindigkeit des Spielers im Sprint
     public float smoothTime = 0.3f;     // Verzögerung für die Kameraverfolgung
     private Vector3 velocity = Vector3.zero; // für Glättung der Kamerabewegung
-    private Animator Player;            // Referenz auf den Animator des Spielers
-    private bool Sprint;                // Variabel für Sprintstatus
-
+    private Animator playerAnimator;    // Referenz auf den Animator des Spielers
+    private Rigidbody2D rb;             // Referenz auf das Rigidbody2D des Spielers
+    private bool isSprinting;           // Variabel für Sprintstatus
 
     // Start ist beim ersten Frame
     void Start()
     {
-        Player = GetComponent<Animator>();
-        Sprint = false;
+        playerAnimator = GetComponent<Animator>();
+        rb = GetComponent<Rigidbody2D>();  // Referenz zum Rigidbody2D abrufen
     }
 
-    // Update wird pro Frame aufgerufen
-    void Update()
+    // FixedUpdate wird für die Physik-Updates verwendet
+    void FixedUpdate()
     {
-        float richtungh = Input.GetAxis("Horizontal");
-        float richtungv = Input.GetAxis("Vertical");
+        // Eingaben für Bewegung
+        float moveX = Input.GetAxis("Horizontal");
+        float moveY = Input.GetAxis("Vertical");
 
         // Sprint-Logik
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            Sprint = true;
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            Sprint = false;
-        }
+        isSprinting = Input.GetKey(KeyCode.LeftShift);
 
-        float currentSpeed = Sprint ? sprintSpeed : moveSpeed;
+        // Geschwindigkeit je nach Sprint
+        float currentSpeed = isSprinting ? sprintSpeed : moveSpeed;
 
-        // Bewegung und Animation
-        if (richtungh < 0)
-        {
-            transform.Translate(Vector2.left * currentSpeed * -richtungh * Time.deltaTime);
-            Player.SetBool("isRunningLeft", true);
-        }
-        else
-        {
-            Player.SetBool("isRunningLeft", false);
-        }
+        // Berechnung der Bewegungsrichtung
+        Vector2 movement = new Vector2(moveX, moveY).normalized * currentSpeed;
 
-        if (richtungh > 0)
-        {
-            transform.Translate(Vector2.right * currentSpeed * richtungh * Time.deltaTime);
-            Player.SetBool("isRunningRight", true);
-        }
-        else
-        {
-            Player.SetBool("isRunningRight", false);
-        }
+        // Setze die Geschwindigkeit im Rigidbody2D
+        rb.velocity = new Vector2(movement.x, movement.y);
 
-        if (richtungv < 0)
-        {
-            transform.Translate(Vector2.down * currentSpeed * -richtungv * Time.deltaTime);
-            Player.SetBool("isRunningDown", true);
-        }
-        else
-        {
-            Player.SetBool("isRunningDown", false);
-        }
+        // Animationssteuerung
+        UpdateAnimation(moveX, moveY);
+    }
 
-        if (richtungv > 0)
-        {
-            transform.Translate(Vector2.up * currentSpeed * richtungv * Time.deltaTime);
-            Player.SetBool("isRunningUp", true);
-        }
-        else
-        {
-            Player.SetBool("isRunningUp", false);
-        }
-        }
+    // Methode zur Steuerung der Animationen
+    private void UpdateAnimation(float moveX, float moveY)
+    {
+        // Setzen der Bewegungsanimation
+        playerAnimator.SetBool("isRunningLeft", moveX < 0);
+        playerAnimator.SetBool("isRunningRight", moveX > 0);
+        playerAnimator.SetBool("isRunningDown", moveY < 0);
+        playerAnimator.SetBool("isRunningUp", moveY > 0);
+    }
 
     void LateUpdate()
     {
         // Kamera verfolgen
         Vector3 targetPosition = new Vector3(transform.position.x, transform.position.y, -10); // -10 sorgt dafür, dass die Kamera im Hintergrund bleibt
-        Vector3 smoothPosition = Vector3.SmoothDamp(Camera.main.transform.position, targetPosition, ref velocity, smoothTime);
-        Camera.main.transform.position = smoothPosition;
+        Camera.main.transform.position = Vector3.SmoothDamp(Camera.main.transform.position, targetPosition, ref velocity, smoothTime);
     }
 }
