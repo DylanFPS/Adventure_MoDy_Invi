@@ -542,6 +542,7 @@ MonoBehaviour:
   moveSpeed: 3
   sprintSpeed: 6
   smoothTime: 1
+  sprintAnimationSpeedMultiplier: 1.5
 --- !u!61 &1087123139
 BoxCollider2D:
   m_ObjectHideFlags: 0
