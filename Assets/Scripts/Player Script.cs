@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour
 {
-    public float moveSpeed = 5f;        // Standardgeschwindigkeit des Spielers
-    public float sprintSpeed = 10f;     // Geschwindigkeit des Spielers im Sprint
+    public float moveSpeed = 3f;        // Standardgeschwindigkeit des Spielers
+    public float sprintSpeed = 6f;     // Geschwindigkeit des Spielers im Sprint
     public float smoothTime = 0.3f;     // Verzögerung für die Kameraverfolgung
     private Vector3 velocity = Vector3.zero; // für Glättung der Kamerabewegung
     private Animator Player;            // Referenz auf den Animator des Spielers
     private bool Sprint;                // Variabel für Sprintstatus
+
 
     // Start ist beim ersten Frame
     void Start()
@@ -76,7 +77,7 @@ public class PlayerScript : MonoBehaviour
         {
             Player.SetBool("isRunningUp", false);
         }
-    }
+        }
 
     void LateUpdate()
     {
