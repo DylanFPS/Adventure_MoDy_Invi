@@ -13,6 +13,7 @@ public class PlayerScript : MonoBehaviour
     void Start()
     {
         Player = GetComponent<Animator>();
+        Sprint = false;
     }
 
     // Update is called once per frame
@@ -23,10 +24,9 @@ public class PlayerScript : MonoBehaviour
         float richtungh = Input.GetAxis("Horizontal");
         float richtungv = Input.GetAxis("Vertical");
 
-        Sprint = false;
         if(Sprint = true)
         {
-            moveSpeed = 8;
+            moveSpeed = 3;
         }
         if(Sprint = false)
         {
